@@ -8,18 +8,48 @@
 
 import UIKit
 
-class ViewController: UIViewController {
-
+class ViewController: UIViewController, SettingsViewDelegate {
+    @IBOutlet var nameLabel: UILabel!
+    @IBOutlet var infoLabel: UILabel!
+    
+    var name = ""
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        if name.isEmpty {
+            infoLabel.text = "Hit settings to enter your name 👍🏽"
+        }
+    }
+    
+    func didSetName(settingsViewController: SettingsViewController, newName: String) {
+        name = newName
+        updateUI()
+    }
+    
+    func updateUI() {
+        if name.isEmpty {
+            infoLabel.text = "Hit settings to enter your name 👍🏽"
+            nameLabel.text = ""
+        }
+        else {
+            infoLabel.text = ""
+            nameLabel.text = "Welcome \(name)"
+        }
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        if segue.identifier == "modifySettingsSegue" {
+            let settingsVC = segue.destinationViewController as! SettingsViewController
+            settingsVC.delegate = self
+            
+            if name.isEmpty {
+                settingsVC.name = "Enter Name"
+            }
+            else {
+                settingsVC.name = name
+            }
+        }
     }
-
-
 }
 
